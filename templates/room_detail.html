@@ -1,0 +1,566 @@
+{% extends "base.html" %}
+
+{% block title %}{{ room.name }} - Skill Swap Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="room-header">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h2 class="gradient-text">
+                        <i class="fas fa-{{ 'lock' if not room.is_public else 'users' }}"></i> 
+                        {{ room.name }}
+                    </h2>
+                    <p class="text-muted mb-2">{{ room.description or 'No description available' }}</p>
+                    <div class="room-info">
+                        <span class="badge bg-{{ 'success' if room.is_public else 'secondary' }} me-2">
+                            {{ 'Public' if room.is_public else 'Private' }}
+                        </span>                    <small class="text-muted">
+                        <i class="fas fa-user"></i> Created by {{ room.creator_name }} • 
+                        <i class="fas fa-users"></i> {{ room.member_count }} members • 
+                        <i class="fas fa-key"></i> Code: <strong>{{ room.room_code }}</strong> • 
+                        <i class="fas fa-clock"></i> {{ room.created_at }}
+                    </small>
+                    </div>
+                </div>
+                <div class="room-actions">
+                    <a href="{{ url_for('rooms') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Rooms
+                    </a>
+                    {% if room.creator_id == session.user_id %}
+                        <button class="btn btn-outline-danger ms-2" data-bs-toggle="modal" data-bs-target="#deleteRoomModal">
+                            <i class="fas fa-trash"></i> Delete Room
+                        </button>
+                    {% else %}
+                        <a href="{{ url_for('leave_room', room_id=room.id) }}" class="btn btn-outline-danger ms-2"
+                           onclick="return confirm('Are you sure you want to leave this room?')">
+                            <i class="fas fa-sign-out-alt"></i> Leave Room
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <hr class="stylish-hr">
+    </div>
+</div>
+
+<div class="row">
+    <!-- Chat Area -->
+    <div class="col-lg-8">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h5><i class="fas fa-comments"></i> Room Chat</h5>
+                <small class="text-muted">{{ messages|length }} messages</small>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="message-item {{ 'own-message' if message.user_id == session.user_id else 'other-message' }}">
+                            <div class="message-header">
+                                <strong class="username">{{ message.name }}</strong>
+                                <small class="timestamp">{{ message.created_at }}</small>
+                            </div>
+                            <div class="message-content">
+                                {{ message.message }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-chat text-center py-5">
+                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No messages yet</h5>
+                        <p class="text-muted">Start the conversation and share your knowledge!</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="chat-input">
+                <form action="{{ url_for('send_message', room_id=room.id) }}" method="POST" id="messageForm">
+                    <input type="hidden" name="room_id" value="{{ room.id }}">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="message" id="messageInput" 
+                               placeholder="Type your message..." required autocomplete="off">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Room Members -->
+        <div class="card mb-4 members-card">
+            <div class="card-header">
+                <h6><i class="fas fa-users"></i> Members ({{ room.member_count }})</h6>
+            </div>
+            <div class="card-body">
+                {% if members %}
+                    {% for member in members %}
+                        <div class="member-item d-flex align-items-center mb-3">
+                            <div class="member-avatar">
+                                {% if member.profile_photo %}
+                                    <img src="{{ url_for('static', filename='uploads/' + member.profile_photo) }}" 
+                                         alt="{{ member.username }}" class="rounded-circle">
+                                {% else %}
+                                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center">
+                                        {{ member.username[0].upper() }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="member-info ms-3">
+                                <strong>{{ member.username }}</strong>
+                                {% if member.id == room.creator_id %}
+                                    <span class="badge bg-warning ms-1">Creator</span>
+                                {% endif %}
+                                <div class="member-stats small text-muted">
+                                    <i class="fas fa-star"></i> {{ member.rating|round(1) if member.rating else 'No rating' }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">No members found</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Room Stats -->
+        <div class="card mb-4 stats-card">
+            <div class="card-header">
+                <h6><i class="fas fa-chart-bar"></i> Room Activity</h6>
+            </div>
+            <div class="card-body">
+                <div class="stat-row d-flex justify-content-between align-items-center mb-2">
+                    <span><i class="fas fa-comments text-primary"></i> Total Messages</span>
+                    <strong>{{ messages|length }}</strong>
+                </div>
+                <div class="stat-row d-flex justify-content-between align-items-center mb-2">
+                    <span><i class="fas fa-users text-success"></i> Active Members</span>
+                    <strong>{{ members|length }}</strong>
+                </div>
+                <div class="stat-row d-flex justify-content-between align-items-center mb-2">
+                    <span><i class="fas fa-calendar text-info"></i> Created</span>
+                    <strong>{{ room.created_at }}</strong>
+                </div>
+                <div class="stat-row d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-eye text-warning"></i> Privacy</span>
+                    <strong>{{ 'Public' if room.is_public else 'Private' }}</strong>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card quick-actions-card">
+            <div class="card-header">
+                <h6><i class="fas fa-bolt"></i> Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('rooms') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-search"></i> Browse Other Rooms
+                    </a>
+                    <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareRoomModal">
+                        <i class="fas fa-share"></i> Share Room
+                    </button>
+                    {% if room.creator_id == session.user_id %}
+                        <button class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#inviteUserModal">
+                            <i class="fas fa-user-plus"></i> Invite User
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editRoomModal">
+                            <i class="fas fa-edit"></i> Edit Room
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Share Room Modal -->
+<div class="modal fade" id="shareRoomModal" tabindex="-1" aria-labelledby="shareRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="shareRoomModalLabel">
+                    <i class="fas fa-share"></i> Share Room
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label"><strong>Room Code</strong></label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="roomCode" 
+                               value="{{ room.room_code }}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyRoomCode()">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <small class="text-muted">Share this code with others to invite them to join the room.</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label"><strong>Room Link</strong></label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="roomLink" 
+                               value="{{ request.url }}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyRoomLink()">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <small class="text-muted">Direct link to this room.</small>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>How to join:</strong>
+                    <ol class="mb-0 mt-2">
+                        <li>Go to the Rooms page</li>
+                        <li>Enter the room code in the "Join by Code" field</li>
+                        <li>Click "Join" to enter the room</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Invite User Modal (Creator Only) -->
+{% if room.creator_id == session.user_id %}
+<div class="modal fade" id="inviteUserModal" tabindex="-1" aria-labelledby="inviteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="inviteUserModalLabel">
+                    <i class="fas fa-user-plus"></i> Invite User to Room
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('invite_user_to_room') }}" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="room_id" value="{{ room.id }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               required placeholder="Enter username to invite">
+                        <small class="text-muted">Enter the exact username of the person you want to invite.</small>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Note:</strong> Only room creators can directly invite users. The user will be immediately added to the room if they exist and are not banned.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-user-plus"></i> Invite User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Delete Room Modal (Creator Only) -->
+{% if room.creator_id == session.user_id %}
+<div class="modal fade" id="deleteRoomModal" tabindex="-1" aria-labelledby="deleteRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteRoomModalLabel">
+                    <i class="fas fa-trash"></i> Delete Room
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Warning:</strong> This action cannot be undone!
+                </div>
+                <p>Are you sure you want to delete the room <strong>"{{ room.name }}"</strong>?</p>
+                <p class="text-muted">This will permanently delete:</p>
+                <ul class="text-muted">
+                    <li>All room messages ({{ messages|length }} messages)</li>
+                    <li>All member associations ({{ room.member_count }} members)</li>
+                    <li>The room itself and its invitation code</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <form method="POST" action="{{ url_for('delete_room', room_id=room.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete Room
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageForm = document.getElementById('messageForm');
+    const messageInput = document.getElementById('messageInput');
+    
+    // Auto-scroll to bottom of chat
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Initial scroll to bottom
+    scrollToBottom();
+    
+    // Handle form submission
+    messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                messageInput.value = '';
+                // Reload the page to show new message
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+        });
+    });
+    
+    // Auto-refresh messages every 5 seconds
+    setInterval(function() {
+        fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newMessages = doc.getElementById('chatMessages');
+            if (newMessages) {
+                chatMessages.innerHTML = newMessages.innerHTML;
+                scrollToBottom();
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing messages:', error);
+        });
+    }, 5000);
+});
+
+function copyRoomCode() {
+    const roomCode = document.getElementById('roomCode');
+    roomCode.select();
+    document.execCommand('copy');
+    
+    // Show feedback
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    button.classList.remove('btn-outline-secondary');
+    button.classList.add('btn-success');
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-secondary');
+    }, 2000);
+}
+
+function copyRoomLink() {
+    const roomLink = document.getElementById('roomLink');
+    roomLink.select();
+    document.execCommand('copy');
+    
+    // Show feedback
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    button.classList.remove('btn-outline-secondary');
+    button.classList.add('btn-success');
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-secondary');
+    }, 2000);
+}
+</script>
+
+<style>
+.room-header {
+    margin-bottom: 30px;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stylish-hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #667eea, transparent);
+    margin: 30px 0;
+}
+
+.chat-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.chat-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: between;
+    align-items: center;
+}
+
+.chat-messages {
+    height: 500px;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f8f9fa;
+}
+
+.message-item {
+    margin-bottom: 15px;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.own-message {
+    text-align: right;
+}
+
+.own-message .message-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 18px 18px 5px 18px;
+    display: inline-block;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.other-message .message-content {
+    background: white;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 18px 18px 18px 5px;
+    display: inline-block;
+    max-width: 70%;
+    word-wrap: break-word;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.message-header {
+    margin-bottom: 5px;
+}
+
+.username {
+    color: #667eea;
+}
+
+.timestamp {
+    color: #6c757d;
+    margin-left: 10px;
+}
+
+.chat-input {
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #dee2e6;
+}
+
+.empty-chat {
+    background: white;
+    border-radius: 10px;
+    margin: 20px;
+}
+
+.members-card, .stats-card, .quick-actions-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.member-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+.member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: bold;
+}
+
+.stat-row {
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.room-actions .btn {
+    white-space: nowrap;
+}
+
+.room-info {
+    margin-top: 10px;
+}
+
+/* Custom scrollbar for chat */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+</style>
+{% endblock %}

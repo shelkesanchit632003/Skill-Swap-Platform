@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+
+{% block title %}Rooms - Skill Swap Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header">
+            <h2 class="gradient-text"><i class="fas fa-users"></i> Community Rooms</h2>
+            <p class="text-muted">Join rooms to connect with like-minded learners and share knowledge</p>
+        </div>
+        <hr class="stylish-hr">
+    </div>
+</div>
+
+<!-- Room Actions -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="search-box">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search rooms..." id="roomSearch">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="join-by-code">
+            <form action="{{ url_for('join_room_by_code') }}" method="POST" class="d-flex">
+                <input type="text" class="form-control" name="room_code" placeholder="Enter room code" required>
+                <button type="submit" class="btn btn-success ms-2">
+                    <i class="fas fa-sign-in-alt"></i> Join
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomModal">
+            <i class="fas fa-plus"></i> Create New Room
+        </button>
+    </div>
+</div>
+
+<!-- Room Stats -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card card bg-gradient-primary text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-door-open fa-2x mb-2"></i>
+                <h3>{{ public_rooms|length }}</h3>
+                <p class="mb-0">Public Rooms</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card card bg-gradient-success text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-2x mb-2"></i>
+                <h3>{{ total_members }}</h3>
+                <p class="mb-0">Total Members</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card card bg-gradient-info text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-user-check fa-2x mb-2"></i>
+                <h3>{{ user_rooms|length }}</h3>
+                <p class="mb-0">Your Rooms</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card card bg-gradient-warning text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-comments fa-2x mb-2"></i>
+                <h3>{{ total_messages }}</h3>
+                <p class="mb-0">Messages Today</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rooms Grid -->
+<div class="row">
+    {% if public_rooms %}
+        {% for room in public_rooms %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="room-card card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 text-truncate">{{ room.name }}</h6>
+                        <span class="badge bg-{{ 'success' if room.is_public else 'secondary' }}">
+                            {{ 'Public' if room.is_public else 'Private' }}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-muted mb-3">
+                            {{ room.description[:100] + '...' if room.description and room.description|length > 100 else room.description or 'No description available' }}
+                        </p>
+                        
+                        <div class="room-stats mb-3">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Members</small>
+                                    <strong class="text-primary">{{ room.member_count }}</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Messages</small>
+                                    <strong class="text-success">{{ room.message_count or 0 }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="room-meta mb-3">
+                            <small class="text-muted">
+                                <i class="fas fa-user"></i> Created by {{ room.creator_name }}
+                                {% if room.creator_id == session.user_id %}
+                                    <span class="badge bg-warning ms-1">You</span>
+                                {% endif %}
+                            </small><br>
+                            <small class="text-muted">
+                                <i class="fas fa-clock"></i> {{ room.created_at }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        {% if room.is_member %}
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('room_detail', room_id=room.id) }}" class="btn btn-primary btn-sm flex-fill">
+                                    <i class="fas fa-comments"></i> Open Chat
+                                </a>
+                                <a href="{{ url_for('leave_room', room_id=room.id) }}" class="btn btn-outline-danger btn-sm"
+                                   onclick="return confirm('Are you sure you want to leave this room?')">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </a>
+                            </div>
+                        {% else %}
+                            <a href="{{ url_for('join_room', room_id=room.id) }}" class="btn btn-success btn-sm w-100">
+                                <i class="fas fa-plus"></i> Join Room
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-users fa-4x text-muted mb-4"></i>
+                <h4 class="text-muted">No rooms available yet</h4>
+                <p class="text-muted mb-4">Be the first to create a room and start building the community!</p>
+                <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#createRoomModal">
+                    <i class="fas fa-plus"></i> Create First Room
+                </button>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Create Room Modal -->
+<div class="modal fade" id="createRoomModal" tabindex="-1" aria-labelledby="createRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="createRoomModalLabel">
+                    <i class="fas fa-plus"></i> Create New Room
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('create_room') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="room_name" class="form-label">Room Name</label>
+                        <input type="text" class="form-control" id="room_name" name="name" required 
+                               placeholder="e.g., Python Learners, Design Enthusiasts">
+                    </div>
+                    <div class="mb-3">
+                        <label for="room_description" class="form-label">Description</label>
+                        <textarea class="form-control" id="room_description" name="description" rows="4" 
+                                  placeholder="Describe what this room is about, what topics are discussed, and who should join..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_public" name="is_public" checked>
+                            <label class="form-check-label" for="is_public">
+                                <strong>Make this room public</strong>
+                                <small class="text-muted d-block">Anyone can discover and join this room</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Room Guidelines:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Keep discussions relevant to the room topic</li>
+                            <li>Be respectful and supportive of all members</li>
+                            <li>Share knowledge and help others learn</li>
+                            <li>No spam or self-promotion</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Room
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Room search functionality
+    const searchInput = document.getElementById('roomSearch');
+    const roomCards = document.querySelectorAll('.room-card');
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        roomCards.forEach(function(card) {
+            const roomName = card.querySelector('.card-header h6').textContent.toLowerCase();
+            const roomDesc = card.querySelector('.card-text').textContent.toLowerCase();
+            
+            if (roomName.includes(searchTerm) || roomDesc.includes(searchTerm)) {
+                card.closest('.col-lg-4').style.display = 'block';
+            } else {
+                card.closest('.col-lg-4').style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stylish-hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #667eea, transparent);
+    margin: 30px 0;
+}
+
+.search-box .input-group-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+
+.search-box .form-control {
+    border-left: none;
+}
+
+.search-box .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: #667eea;
+}
+
+.join-by-code .form-control {
+    border-right: none;
+}
+
+.join-by-code .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    border-color: #28a745;
+}
+
+.stat-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.room-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.room-card .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.room-stats {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.room-meta {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.empty-state {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    padding: 60px 40px;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.code-highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.invite-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.room-code-display {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.room-code-display .code {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+}
+</style>
+{% endblock %}

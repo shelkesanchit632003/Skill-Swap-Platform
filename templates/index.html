@@ -1,0 +1,1148 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Modern Hero Section -->
+<section class="hero-section">
+  <div class="hero-background">
+    <div class="hero-particles"></div>
+    <div class="hero-gradient"></div>
+  </div>
+  <div class="container-fluid px-5">
+    <div class="row min-vh-100 align-items-center">
+      <div class="col-lg-6">
+        <div class="hero-content">
+          <span class="hero-badge">✨ Skill Exchange Platform</span>
+          <h1 class="hero-title">
+            Learn, Teach & 
+            <span class="gradient-text">Grow Together</span>
+          </h1>
+          <p class="hero-subtitle">
+            Connect with passionate learners and mentors worldwide. Exchange skills, 
+            build meaningful relationships, and accelerate your personal growth journey.
+          </p>
+          <div class="hero-buttons">
+            {% if not session.user_id %}
+              <a href="{{ url_for('register') }}" class="btn btn-primary btn-hero">
+                <span>Start Learning</span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+              <a href="{{ url_for('browse_skills') }}" class="btn btn-outline btn-hero">
+                <i class="fas fa-play"></i>
+                <span>Watch Demo</span>
+              </a>
+            {% else %}
+              <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-hero">
+                <span>Go to Dashboard</span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+              <a href="{{ url_for('browse_skills') }}" class="btn btn-outline btn-hero">
+                <i class="fas fa-search"></i>
+                <span>Browse Skills</span>
+              </a>
+            {% endif %}
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-number">10K+</div>
+              <div class="stat-label">Active Learners</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">500+</div>
+              <div class="stat-label">Skills Available</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">50K+</div>
+              <div class="stat-label">Successful Swaps</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-visual">
+          <div class="skill-cards-floating">
+            <div class="skill-card card-1">
+              <i class="fab fa-python"></i>
+              <span>Python</span>
+            </div>
+            <div class="skill-card card-2">
+              <i class="fab fa-figma"></i>
+              <span>Design</span>
+            </div>
+            <div class="skill-card card-3">
+              <i class="fas fa-language"></i>
+              <span>Languages</span>
+            </div>
+            <div class="skill-card card-4">
+              <i class="fas fa-chart-line"></i>
+              <span>Marketing</span>
+            </div>
+            <div class="skill-card card-5">
+              <i class="fab fa-react"></i>
+              <span>React</span>
+            </div>
+            <div class="skill-card card-6">
+              <i class="fas fa-camera"></i>
+              <span>Photography</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-section">
+  <div class="container">
+    <div class="section-header text-center">
+      <span class="section-badge">Simple Process</span>
+      <h2 class="section-title">How Skill Swap Works</h2>
+      <p class="section-subtitle">
+        Getting started is easy. Follow these simple steps to begin your learning journey.
+      </p>
+    </div>
+    
+    <div class="process-timeline">
+      <div class="process-step">
+        <div class="step-number">01</div>
+        <div class="step-icon">
+          <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="step-content">
+          <h3>Create Profile</h3>
+          <p>Sign up and showcase your skills, interests, and learning goals.</p>
+        </div>
+      </div>
+      
+      <div class="process-step">
+        <div class="step-number">02</div>
+        <div class="step-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="step-content">
+          <h3>Find Matches</h3>
+          <p>Browse and discover people with complementary skills and interests.</p>
+        </div>
+      </div>
+      
+      <div class="process-step">
+        <div class="step-number">03</div>
+        <div class="step-icon">
+          <i class="fas fa-handshake"></i>
+        </div>
+        <div class="step-content">
+          <h3>Start Learning</h3>
+          <p>Connect, exchange knowledge, and grow together in a supportive environment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <div class="features-content">
+          <span class="section-badge">Why Choose Us</span>
+          <h2 class="section-title">Built for Modern Learning</h2>
+          <p class="section-subtitle">
+            Experience seamless skill exchange with our thoughtfully designed platform.
+          </p>
+          
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Verified Community</h4>
+                <p>Connect with real, verified learners and mentors from around the world.</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Safe & Secure</h4>
+                <p>Your privacy and security are our top priorities with end-to-end protection.</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Quality Assurance</h4>
+                <p>Built-in rating and feedback system ensures high-quality learning experiences.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-6">
+        <div class="features-visual">
+          <div class="feature-mockup">
+            <div class="mockup-browser">
+              <div class="browser-header">
+                <div class="browser-dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+              <div class="browser-content">
+                <div class="dashboard-preview">
+                  <div class="preview-header">
+                    <div class="preview-avatar"></div>
+                    <div class="preview-info">
+                      <div class="preview-name"></div>
+                      <div class="preview-skill"></div>
+                    </div>
+                  </div>
+                  <div class="preview-stats">
+                    <div class="stat-box"></div>
+                    <div class="stat-box"></div>
+                    <div class="stat-box"></div>
+                  </div>
+                  <div class="preview-cards">
+                    <div class="card-item"></div>
+                    <div class="card-item"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trending Skills Section -->
+<section class="trending-skills-section">
+  <div class="container">
+    <div class="section-header text-center">
+      <span class="section-badge">Popular Skills</span>
+      <h2 class="section-title">Trending Skills</h2>
+      <p class="section-subtitle">
+        Discover the most popular skills being learned and taught on our platform.
+      </p>
+    </div>
+    
+    <div class="skills-grid">
+      {% if featured_skills %}
+        {% for skill in featured_skills[:8] %}
+          <div class="skill-item">
+            <div class="skill-icon">
+              {% if 'python' in skill.skill_name.lower() %}
+                <i class="fab fa-python"></i>
+              {% elif 'javascript' in skill.skill_name.lower() or 'js' in skill.skill_name.lower() %}
+                <i class="fab fa-js-square"></i>
+              {% elif 'design' in skill.skill_name.lower() %}
+                <i class="fas fa-palette"></i>
+              {% elif 'photography' in skill.skill_name.lower() %}
+                <i class="fas fa-camera"></i>
+              {% elif 'music' in skill.skill_name.lower() %}
+                <i class="fas fa-music"></i>
+              {% elif 'language' in skill.skill_name.lower() %}
+                <i class="fas fa-language"></i>
+              {% elif 'marketing' in skill.skill_name.lower() %}
+                <i class="fas fa-chart-line"></i>
+              {% else %}
+                <i class="fas fa-lightbulb"></i>
+              {% endif %}
+            </div>
+            <div class="skill-info">
+              <h4>{{ skill.skill_name }}</h4>
+              <p>by {{ skill.name }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-star"></i>
+          <h4>No trending skills yet</h4>
+          <p>Be the first to add your skills and start learning!</p>
+          <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <div class="cta-content">
+        <h2>Ready to Start Your Learning Journey?</h2>
+        <p>Join thousands of learners and mentors who are growing their skills together.</p>
+        <div class="cta-buttons">
+          {% if not session.user_id %}
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+              <span>Get Started Free</span>
+              <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="{{ url_for('browse_skills') }}" class="btn btn-outline btn-lg">
+              <span>Browse Skills</span>
+            </a>
+          {% else %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+              <span>Go to Dashboard</span>
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="cta-visual">
+        <div class="floating-elements">
+          <div class="floating-element element-1">🚀</div>
+          <div class="floating-element element-2">💡</div>
+          <div class="floating-element element-3">⭐</div>
+          <div class="floating-element element-4">🎯</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Keep the testimonials carousel from previous version -->
+<section class="testimonials-section mb-5 animate-fade-in" style="animation-delay:0.5s;">
+  <div class="container">
+    <div id="testimonialsCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="testimonial-card card border-0 shadow-sm p-4 text-center">
+            <blockquote class="blockquote mb-3">
+              <p class="mb-0">“Skill Swap helped me learn web development from real people, not just videos. The community is amazing!”</p>
+            </blockquote>
+            <footer class="blockquote-footer">Aarav, <cite title="Source Title">Learner & Mentor</cite></footer>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="testimonial-card card border-0 shadow-sm p-4 text-center">
+            <blockquote class="blockquote mb-3">
+              <p class="mb-0">“I swapped my design skills for coding help. It’s a win-win for everyone!”</p>
+            </blockquote>
+            <footer class="blockquote-footer">Priya, <cite title="Source Title">Designer</cite></footer>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="testimonial-card card border-0 shadow-sm p-4 text-center">
+            <blockquote class="blockquote mb-3">
+              <p class="mb-0">“The platform is so easy to use and the dark mode is beautiful!”</p>
+            </blockquote>
+            <footer class="blockquote-footer">Sam, <cite title="Source Title">Full Stack Dev</cite></footer>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#testimonialsCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#testimonialsCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Modern Homepage Styles -->
+<style>
+/* Hero Section */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  left: 0;
+  right: 0;
+}
+
+/* Ensure full width coverage */
+.hero-section .container-fluid {
+  max-width: 100%;
+  width: 100%;
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.hero-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="25" r="1.5" fill="rgba(255,255,255,0.08)"/><circle cx="50" cy="50" r="0.8" fill="rgba(255,255,255,0.12)"/><circle cx="25" cy="75" r="1.2" fill="rgba(255,255,255,0.06)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+  animation: particleFloat 20s linear infinite;
+}
+
+.hero-gradient {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.6) 100%);
+  backdrop-filter: blur(0.5px);
+}
+
+@keyframes particleFloat {
+  0% { transform: translateY(0) translateX(0); }
+  100% { transform: translateY(-100px) translateX(50px); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+  border: none;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  opacity: 0.9;
+  max-width: 600px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.btn-hero {
+  padding: 16px 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+  color: white;
+}
+
+.btn-outline {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  color: white;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffd89b;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Floating Skills Animation */
+.hero-visual {
+  position: relative;
+  z-index: 2;
+  height: 500px;
+}
+
+.skill-cards-floating {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.skill-card {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(30px);
+  border: none;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  font-weight: 600;
+  min-width: 120px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: float 6s ease-in-out infinite;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  outline: none;
+}
+
+.skill-card:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  border: none;
+  outline: none;
+}
+
+.skill-card i {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  opacity: 0.9;
+}
+
+.skill-card span {
+  font-size: 0.9rem;
+  opacity: 0.95;
+}
+
+.card-1 { top: 10%; left: 10%; animation-delay: 0s; }
+.card-2 { top: 20%; right: 15%; animation-delay: 1s; }
+.card-3 { top: 45%; left: 5%; animation-delay: 2s; }
+.card-4 { top: 60%; right: 10%; animation-delay: 3s; }
+.card-5 { bottom: 15%; left: 20%; animation-delay: 4s; }
+.card-6 { bottom: 10%; right: 25%; animation-delay: 5s; }
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+    opacity: 0.8;
+  }
+  50% { 
+    transform: translateY(-25px) rotate(2deg); 
+    opacity: 1;
+  }
+}
+
+/* Section Styling */
+.section-header {
+  margin-bottom: 60px;
+}
+
+.section-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: #2d3748;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: #718096;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* How It Works Section */
+.how-it-works-section {
+  padding: 100px 0;
+  background: #f8fafc;
+}
+
+.process-timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.process-step {
+  text-align: center;
+  flex: 1;
+  position: relative;
+}
+
+.process-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 40px;
+  right: -20px;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  z-index: 1;
+}
+
+.step-number {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 2;
+}
+
+.step-icon {
+  background: white;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+  color: #667eea;
+  font-size: 1.5rem;
+}
+
+.step-content h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #2d3748;
+}
+
+.step-content p {
+  color: #718096;
+  line-height: 1.6;
+}
+
+/* Features Section */
+.features-section {
+  padding: 100px 0;
+}
+
+.feature-list {
+  margin-top: 40px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.feature-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.feature-text h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #2d3748;
+}
+
+.feature-text p {
+  color: #718096;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Feature Mockup */
+.features-visual {
+  padding: 40px;
+}
+
+.feature-mockup {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.mockup-browser {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.browser-header {
+  background: #f7fafc;
+  padding: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.browser-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.browser-dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e2e8f0;
+}
+
+.browser-dots span:nth-child(1) { background: #fc8181; }
+.browser-dots span:nth-child(2) { background: #f6e05e; }
+.browser-dots span:nth-child(3) { background: #68d391; }
+
+.browser-content {
+  padding: 30px;
+}
+
+.dashboard-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.preview-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.preview-info {
+  flex: 1;
+}
+
+.preview-name, .preview-skill {
+  height: 16px;
+  border-radius: 8px;
+  background: #e2e8f0;
+  margin-bottom: 8px;
+}
+
+.preview-name { width: 120px; }
+.preview-skill { width: 80px; }
+
+.preview-stats {
+  display: flex;
+  gap: 15px;
+}
+
+.stat-box {
+  flex: 1;
+  height: 60px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+}
+
+.preview-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card-item {
+  height: 80px;
+  border-radius: 12px;
+  background: #f7fafc;
+}
+
+/* Skills Grid */
+.trending-skills-section {
+  padding: 100px 0;
+  background: #f8fafc;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.skill-item {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #f1f5f9;
+}
+
+.skill-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.skill-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 20px;
+}
+
+.skill-info h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #2d3748;
+}
+
+.skill-info p {
+  color: #718096;
+  margin: 0;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #718096;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  color: #e2e8f0;
+  margin-bottom: 20px;
+}
+
+/* Testimonials Section */
+.testimonials-section {
+  padding: 100px 0;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+}
+
+.testimonial-content {
+  margin-bottom: 30px;
+}
+
+.rating {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.rating i {
+  color: #fbbf24;
+  font-size: 1.2rem;
+}
+
+.testimonial-content p {
+  color: #4a5568;
+  line-height: 1.7;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.author-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.author-info h5 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #2d3748;
+}
+
+.author-info span {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 100px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  padding: 60px;
+  text-align: center;
+  color: white;
+  position: relative;
+  z-index: 2;
+}
+
+.cta-content h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.cta-content p {
+  font-size: 1.3rem;
+  margin-bottom: 40px;
+  opacity: 0.9;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-visual {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.floating-elements {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.floating-element {
+  position: absolute;
+  font-size: 2rem;
+  animation: floatCTA 8s ease-in-out infinite;
+}
+
+.element-1 { top: 20%; right: 10%; animation-delay: 0s; }
+.element-2 { top: 60%; right: 15%; animation-delay: 2s; }
+.element-3 { bottom: 30%; left: 10%; animation-delay: 4s; }
+.element-4 { top: 40%; left: 5%; animation-delay: 6s; }
+
+@keyframes floatCTA {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+  50% { transform: translateY(-20px) rotate(5deg); opacity: 1; }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .process-timeline {
+    flex-direction: column;
+    gap: 60px;
+  }
+  
+  .process-step:not(:last-child)::after {
+    display: none;
+  }
+  
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 60px 0;
+    height: 100vh;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+  }
+  
+  .hero-section .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .hero-stats {
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .skill-cards-floating {
+    display: none;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .cta-card {
+    padding: 40px 20px;
+  }
+  
+  .cta-content h2 {
+    font-size: 2rem;
+  }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .section-title {
+  color: #f7fafc;
+}
+
+[data-theme="dark"] .how-it-works-section,
+[data-theme="dark"] .trending-skills-section {
+  background: #1a1a2e;
+}
+
+[data-theme="dark"] .skill-item,
+[data-theme="dark"] .testimonial-card,
+[data-theme="dark"] .mockup-browser {
+  background: #16213e;
+  border-color: #2d3748;
+}
+
+[data-theme="dark"] .feature-text h4,
+[data-theme="dark"] .skill-info h4,
+[data-theme="dark"] .author-info h5 {
+  color: #f7fafc;
+}
+
+[data-theme="dark"] .feature-text p,
+[data-theme="dark"] .skill-info p,
+[data-theme="dark"] .testimonial-content p {
+  color: #a0aec0;
+}
+</style>
+{% endblock %}
