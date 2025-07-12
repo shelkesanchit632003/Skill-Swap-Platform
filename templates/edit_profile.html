@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - Skill Swap Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-edit"></i> Edit Profile</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" name="name" value="{{ user.name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location" value="{{ user.location or '' }}" 
+                                   placeholder="City, Country">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="availability" class="form-label">Availability</label>
+                        <input type="text" class="form-control" name="availability" value="{{ user.availability or '' }}" 
+                               placeholder="e.g., Weekends, Evenings, Flexible">
+                        <div class="form-text">When are you typically available for skill swaps?</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="profile_photo" class="form-label">Profile Photo</label>
+                        <input type="file" class="form-control" name="profile_photo" accept="image/*">
+                        <div class="form-text">Upload a new profile photo (optional, max 16MB)</div>
+                        {% if user.profile_photo %}
+                            <div class="mt-2">
+                                <img src="{{ url_for('static', filename='uploads/' + user.profile_photo) }}" 
+                                     class="rounded" width="100" height="100" alt="Current profile photo">
+                                <small class="d-block text-muted">Current profile photo</small>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_public" 
+                                   {{ 'checked' if user.is_public else '' }}>
+                            <label class="form-check-label">
+                                Make my profile public
+                            </label>
+                            <div class="form-text">
+                                Public profiles can be found by other users when browsing skills. 
+                                Private profiles are hidden from search.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6><i class="fas fa-info-circle"></i> Account Information (Read Only)</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-sm-3"><strong>Username:</strong></div>
+                                <div class="col-sm-9">{{ user.username }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-3"><strong>Email:</strong></div>
+                                <div class="col-sm-9">{{ user.email }}</div>
+                            </div>
+                            <div class="row mb-0">
+                                <div class="col-sm-3"><strong>Member Since:</strong></div>
+                                <div class="col-sm-9">{{ user.created_at }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('profile') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
