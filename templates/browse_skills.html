@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Skills - Skill Swap Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2><i class="fas fa-search"></i> Browse Available Skills</h2>
+        
+        <!-- Search Form -->
+        <form method="GET" class="mb-4">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" value="{{ search }}" 
+                       placeholder="Search for skills (e.g., 'Photoshop', 'Excel', 'Guitar')">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                {% if search %}
+                    <a href="{{ url_for('browse_skills') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    {% if skills %}
+        {% for skill in skills %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-3">
+                            {% if skill.profile_photo %}
+                                <img src="{{ url_for('static', filename='uploads/' + skill.profile_photo) }}" 
+                                     class="rounded-circle me-3 profile-photo-clickable" width="50" height="50" 
+                                     alt="Profile" data-user-id="{{ skill.user_id }}">
+                            {% else %}
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3 profile-photo-clickable" 
+                                     style="width: 50px; height: 50px;" data-user-id="{{ skill.user_id }}">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-1">{{ skill.skill_name }}</h5>
+                                <h6 class="card-subtitle text-muted mb-2">
+                                    <i class="fas fa-user"></i> {{ skill.name }}
+                                </h6>
+                                {% if skill.location %}
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt"></i> {{ skill.location }}
+                                    </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        {% if skill.description %}
+                            <p class="card-text">{{ skill.description }}</p>
+                        {% endif %}
+                        
+                        <small class="text-muted">
+                            <i class="fas fa-clock"></i> Listed {{ skill.created_at }}
+                        </small>
+                    </div>
+                    
+                    {% if session.user_id and session.user_id != skill.user_id %}
+                        <div class="card-footer">
+                            <a href="{{ url_for('request_swap', skill_id=skill.id) }}" 
+                               class="btn btn-primary btn-sm w-100">
+                                <i class="fas fa-handshake"></i> Request Swap
+                            </a>
+                        </div>
+                    {% elif not session.user_id %}
+                        <div class="card-footer">
+                            <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="fas fa-sign-in-alt"></i> Login to Request
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i>
+                {% if search %}
+                    No skills found matching "{{ search }}". Try a different search term.
+                {% else %}
+                    No skills available yet. Be the first to share your skills!
+                {% endif %}
+            </div>
+            
+            {% if not session.user_id %}
+                <div class="text-center">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Join and Share Your Skills
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+{% if skills|length > 6 %}
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <p class="text-muted">Showing {{ skills|length }} skills</p>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Reports - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2><i class="fas fa-chart-bar"></i> Platform Reports</h2>
+        <p class="text-muted">Comprehensive analytics and user activity reports</p>
+        <hr>
+    </div>
+</div>
+
+<!-- Swap Statistics Overview -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-exchange-alt"></i> Swap Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <h3 class="text-primary">{{ swap_stats.total_requests }}</h3>
+                        <p class="mb-0">Total Requests</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-warning">{{ swap_stats.pending }}</h3>
+                        <p class="mb-0">Pending</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-success">{{ swap_stats.accepted }}</h3>
+                        <p class="mb-0">Accepted</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-danger">{{ swap_stats.rejected }}</h3>
+                        <p class="mb-0">Rejected</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- User Activity Report -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-users"></i> User Activity Report</h5>
+                <button class="btn btn-sm btn-success" onclick="downloadUserReport()">
+                    <i class="fas fa-download"></i> Download CSV
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm" id="userActivityTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Skills Offered</th>
+                                <th>Skills Wanted</th>
+                                <th>Total Swaps</th>
+                                <th>Avg Rating</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in user_activity %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ user.name }}</strong><br>
+                                        <small class="text-muted">@{{ user.username }}</small>
+                                    </td>
+                                    <td><span class="badge bg-primary">{{ user.skills_offered }}</span></td>
+                                    <td><span class="badge bg-success">{{ user.skills_wanted }}</span></td>
+                                    <td><span class="badge bg-info">{{ user.total_swaps }}</span></td>
+                                    <td>
+                                        {% if user.avg_rating %}
+                                            <span class="text-warning">
+                                                {{ "%.1f"|format(user.avg_rating) }}
+                                                <i class="fas fa-star"></i>
+                                            </span>
+                                        {% else %}
+                                            <small class="text-muted">N/A</small>
+                                        {% endif %}
+                                    </td>
+                                    <td><small>{{ user.created_at }}</small></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Top Skills -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-star"></i> Top Skills</h5>
+            </div>
+            <div class="card-body">
+                {% if top_skills %}
+                    {% for skill in top_skills %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>{{ skill.skill_name }}</span>
+                            <span class="badge bg-primary">{{ skill.count }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No skills data available.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-cog"></i> Report Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" onclick="downloadUserReport()">
+                        <i class="fas fa-download"></i> User Activity CSV
+                    </button>
+                    <button class="btn btn-success" onclick="downloadSwapReport()">
+                        <i class="fas fa-download"></i> Swap Stats CSV
+                    </button>
+                    <button class="btn btn-info" onclick="downloadSkillsReport()">
+                        <i class="fas fa-download"></i> Skills Report CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-info-circle"></i> Report Information</h5>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6>User Activity Report</h6>
+                        <p class="small">Comprehensive overview of user engagement including skills offered/wanted, swap participation, and ratings.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Swap Statistics</h6>
+                        <p class="small">Tracks the status and progression of skill swap requests across the platform.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Skills Analysis</h6>
+                        <p class="small">Identifies the most popular skills and trends in what users are offering and seeking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data for JavaScript -->
+<script type="application/json" id="userData">
+[
+    {% for user in user_activity %}
+    {
+        "name": "{{ user.name|replace('"', '\\"') }}",
+        "username": "{{ user.username }}",
+        "skills_offered": {{ user.skills_offered }},
+        "skills_wanted": {{ user.skills_wanted }},
+        "total_swaps": {{ user.total_swaps }},
+        "avg_rating": "{{ user.avg_rating or 'N/A' }}",
+        "created_at": "{{ user.created_at }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+]
+</script>
+
+<script type="application/json" id="swapData">
+{
+    "total_requests": {{ swap_stats.total_requests }},
+    "pending": {{ swap_stats.pending }},
+    "accepted": {{ swap_stats.accepted }},
+    "rejected": {{ swap_stats.rejected }}
+}
+</script>
+
+<script type="application/json" id="skillsData">
+[
+    {% for skill in top_skills %}
+    {
+        "skill_name": "{{ skill.skill_name|replace('"', '\\"') }}",
+        "count": {{ skill.count }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+]
+</script>
+
+<script>
+function downloadUserReport() {
+    const userData = JSON.parse(document.getElementById('userData').textContent);
+    let csv = 'Name,Username,Skills Offered,Skills Wanted,Total Swaps,Average Rating,Join Date\n';
+    
+    userData.forEach(user => {
+        csv += `"${user.name}","${user.username}",${user.skills_offered},${user.skills_wanted},${user.total_swaps},"${user.avg_rating}","${user.created_at}"\n`;
+    });
+    
+    downloadCSV(csv, 'user_activity_report.csv');
+}
+
+function downloadSwapReport() {
+    const swapData = JSON.parse(document.getElementById('swapData').textContent);
+    let csv = 'Status,Count\n';
+    csv += `Total Requests,${swapData.total_requests}\n`;
+    csv += `Pending,${swapData.pending}\n`;
+    csv += `Accepted,${swapData.accepted}\n`;
+    csv += `Rejected,${swapData.rejected}\n`;
+    
+    downloadCSV(csv, 'swap_statistics_report.csv');
+}
+
+function downloadSkillsReport() {
+    const skillsData = JSON.parse(document.getElementById('skillsData').textContent);
+    let csv = 'Skill Name,Count\n';
+    
+    skillsData.forEach(skill => {
+        csv += `"${skill.skill_name}",${skill.count}\n`;
+    });
+    
+    downloadCSV(csv, 'skills_report.csv');
+}
+
+function downloadCSV(csvContent, filename) {
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+</script>
+{% endblock %}
