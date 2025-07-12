@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2><i class="fas fa-users"></i> User Management</h2>
+        <p class="text-muted">Manage platform users and their accounts</p>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>All Users ({{ users|length }})</h5>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+            <div class="card-body">
+                {% if users %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Contact</th>
+                                    <th>Profile</th>
+                                    <th>Rating</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr class="{{ 'table-danger' if user.is_banned else '' }}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if user.profile_photo %}
+                                                    <img src="{{ url_for('static', filename='uploads/' + user.profile_photo) }}" 
+                                                         class="rounded-circle me-2" width="40" height="40" alt="Profile">
+                                                {% else %}
+                                                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                                         style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-user text-white"></i>
+                                                    </div>
+                                                {% endif %}
+                                                <div>
+                                                    <strong>{{ user.name }}</strong><br>
+                                                    <small class="text-muted">@{{ user.username }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <small>
+                                                <i class="fas fa-envelope"></i> {{ user.email }}<br>
+                                                {% if user.location %}
+                                                    <i class="fas fa-map-marker-alt"></i> {{ user.location }}
+                                                {% endif %}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ 'success' if user.is_public else 'warning' }}">
+                                                {{ 'Public' if user.is_public else 'Private' }}
+                                            </span>
+                                            {% if user.availability %}
+                                                <br><small class="text-muted">{{ user.availability }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user.avg_rating %}
+                                                <span class="text-warning">
+                                                    {% for i in range(1, 6) %}
+                                                        <i class="fas fa-star{{ '' if i <= user.avg_rating else '-empty' }}"></i>
+                                                    {% endfor %}
+                                                </span>
+                                                <br><small>{{ "%.1f"|format(user.avg_rating) }} ({{ user.rating_count }} reviews)</small>
+                                            {% else %}
+                                                <small class="text-muted">No ratings yet</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ 'danger' if user.is_banned else 'success' }}">
+                                                {{ 'Banned' if user.is_banned else 'Active' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small>{{ user.created_at }}</small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ url_for('admin_ban_user', user_id=user.id) }}" 
+                                                   class="btn btn-{% if user.is_banned %}success{% else %}danger{% endif %}"
+                                                   onclick="return confirm('Are you sure you want to {% if user.is_banned %}unban{% else %}ban{% endif %} this user?')">
+                                                    <i class="fas fa-{% if user.is_banned %}check{% else %}ban{% endif %}"></i>
+                                                    {% if user.is_banned %}Unban{% else %}Ban{% endif %}
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> No users found.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> User Management Guidelines</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li><strong>Ban Users:</strong> Use this action for users who violate platform policies, post inappropriate content, or engage in spammy behavior.</li>
+                    <li><strong>Monitor Ratings:</strong> Keep an eye on users with consistently low ratings - they may need additional support or intervention.</li>
+                    <li><strong>Profile Visibility:</strong> Users can choose between public and private profiles. Private profiles won't appear in skill searches.</li>
+                    <li><strong>Contact Information:</strong> User email addresses are only visible to admins for support and moderation purposes.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
