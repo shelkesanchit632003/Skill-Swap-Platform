@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section bg-primary text-white text-center py-5 mb-5 rounded">
+    <div class="container">
+        <h1 class="display-4 mb-3">
+            <i class="fas fa-handshake"></i> Welcome to Skill Swap
+        </h1>
+        <p class="lead mb-4">
+            Connect with others, share your skills, and learn something new!
+        </p>
+        {% if not session.user_id %}
+            <a href="{{ url_for('register') }}" class="btn btn-light btn-lg me-3">
+                <i class="fas fa-user-plus"></i> Join Now
+            </a>
+            <a href="{{ url_for('browse_skills') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-search"></i> Browse Skills
+            </a>
+        {% else %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-light btn-lg me-3">
+                <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+            </a>
+            <a href="{{ url_for('browse_skills') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-search"></i> Browse Skills
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <h2><i class="fas fa-bullhorn"></i> Platform Updates</h2>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ message.title }}</h5>
+                        <p class="card-text">{{ message.message }}</p>
+                        <small class="text-muted">
+                            <i class="fas fa-user"></i> {{ message.admin_name }} - 
+                            <i class="fas fa-clock"></i> {{ message.created_at }}
+                        </small>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No platform updates at the moment.
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-lg-4">
+        <h2><i class="fas fa-star"></i> Featured Skills</h2>
+        {% if featured_skills %}
+            {% for skill in featured_skills %}
+                <div class="card mb-2">
+                    <div class="card-body py-2">
+                        <h6 class="card-title mb-1">{{ skill.skill_name }}</h6>
+                        <small class="text-muted">
+                            <i class="fas fa-user"></i> {{ skill.name }}
+                            {% if skill.location %}
+                                <i class="fas fa-map-marker-alt ms-2"></i> {{ skill.location }}
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No skills available yet.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="text-center">
+            <div class="feature-icon">
+                <i class="fas fa-users fa-3x text-primary"></i>
+            </div>
+            <h3>Connect</h3>
+            <p>Find people with skills you need and offer your own expertise in return.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="text-center">
+            <div class="feature-icon">
+                <i class="fas fa-exchange-alt fa-3x text-primary"></i>
+            </div>
+            <h3>Exchange</h3>
+            <p>Request skill swaps and negotiate mutually beneficial learning experiences.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="text-center">
+            <div class="feature-icon">
+                <i class="fas fa-star fa-3x text-primary"></i>
+            </div>
+            <h3>Rate</h3>
+            <p>Build trust in the community by rating and reviewing your swap experiences.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

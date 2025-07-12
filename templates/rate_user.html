@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Rate User - Skill Swap Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-star"></i> Rate Your Swap Experience</h3>
+            </div>
+            <div class="card-body">
+                <div class="swap-info mb-4 p-3 bg-light rounded">
+                    <h5>Swap Details</h5>
+                    <p class="mb-1"><strong>Requester:</strong> {{ swap.requester_name }}</p>
+                    <p class="mb-0"><strong>Provider:</strong> {{ swap.provider_name }}</p>
+                </div>
+                
+                <form method="POST" action="{{ url_for('submit_rating') }}">
+                    <input type="hidden" name="swap_id" value="{{ swap.id }}">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <div class="rating-stars">
+                            {% for i in range(1, 6) %}
+                                <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}" required>
+                                <label for="star{{ i }}" class="star">
+                                    <i class="fas fa-star"></i>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        <div class="form-text">Click on the stars to rate (1-5 stars)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="feedback" class="form-label">Feedback (Optional)</label>
+                        <textarea class="form-control" name="feedback" rows="4" 
+                                  placeholder="Share your experience with this swap..."></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-star"></i> Submit Rating
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.rating-stars {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.rating-stars input[type="radio"] {
+    display: none;
+}
+
+.rating-stars .star {
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.rating-stars input[type="radio"]:checked ~ .star,
+.rating-stars .star:hover,
+.rating-stars input[type="radio"]:checked ~ .star ~ .star {
+    color: #ffc107;
+}
+
+.rating-stars .star:hover ~ .star {
+    color: #ddd;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.rating-stars .star');
+    const radios = document.querySelectorAll('.rating-stars input[type="radio"]');
+    
+    stars.forEach((star, index) => {
+        star.addEventListener('click', function() {
+            radios[index].checked = true;
+            updateStars(index + 1);
+        });
+        
+        star.addEventListener('mouseenter', function() {
+            updateStars(index + 1);
+        });
+    });
+    
+    document.querySelector('.rating-stars').addEventListener('mouseleave', function() {
+        const checkedIndex = Array.from(radios).findIndex(radio => radio.checked);
+        updateStars(checkedIndex + 1);
+    });
+    
+    function updateStars(rating) {
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.style.color = '#ffc107';
+            } else {
+                star.style.color = '#ddd';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
